@@ -10,7 +10,7 @@ using VContainer;
 namespace Game.Services
 {
     /// <summary>
-    /// Implementation if ISceneService
+    /// Implementation of ISceneService
     /// </summary>
     [Preserve]
     // ReSharper disable once ClassNeverInstantiated.Global

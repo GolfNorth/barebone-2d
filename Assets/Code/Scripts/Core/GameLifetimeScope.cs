@@ -13,6 +13,7 @@ namespace Game.Core
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<SceneService>(Lifetime.Singleton).As<ISceneService>();
+            builder.Register<AudioService>(Lifetime.Singleton).As<IAudioService>();
             builder.RegisterEntryPoint<GameEntryPoint>();
         }
     }
