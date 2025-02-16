@@ -26,7 +26,7 @@ namespace Game.Services
             var sceneBuildIndex = GetSceneBuildIndex(sceneKey.ToString());
 
             return sceneBuildIndex >= 0
-                ? await LoadSceneByIndexAsync(sceneBuildIndex)
+                ? await LoadSceneByIndexAsync(sceneBuildIndex, loadMode, activateOnLoad)
                 : await LoadSceneByKeyAsync(sceneKey, loadMode, activateOnLoad);
         }
 
