@@ -51,7 +51,7 @@ namespace Game.Services
 
                 return sceneInstance.Scene;
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 return _emptyScene;
             }
