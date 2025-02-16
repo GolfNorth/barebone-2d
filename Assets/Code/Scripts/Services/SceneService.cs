@@ -42,6 +42,11 @@ namespace Game.Services
             await SceneManager.UnloadSceneAsync(sceneName).ToUniTask();
         }
 
+        /// <summary>
+        /// Gets the build index of a scene based on its name.
+        /// </summary>
+        /// <param name="sceneName">The name of the scene.</param>
+        /// <returns>The build index of the scene, or -1 if not found.</returns>
         private static int GetSceneBuildIndex(string sceneName)
         {
             for (var i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
@@ -55,6 +60,12 @@ namespace Game.Services
             return -1;
         }
 
+        /// <summary>
+        /// Loads a scene asynchronously based on its build index.
+        /// </summary>
+        /// <param name="sceneBuildIndex">The build index of the scene to load.</param>
+        /// <param name="loadMode">The mode in which to load the scene.</param>
+        /// <param name="activateOnLoad">Whether to activate the scene on load.</param>
         private async UniTask<Scene> LoadSceneByIndexAsync(int sceneBuildIndex,
             LoadSceneMode loadMode = LoadSceneMode.Single, bool activateOnLoad = true)
         {
@@ -70,6 +81,12 @@ namespace Game.Services
             return SceneManager.GetSceneByBuildIndex(sceneBuildIndex);
         }
 
+        /// <summary>
+        /// Loads a scene asynchronously based on its key.
+        /// </summary>
+        /// <param name="key">The key of the scene to load.</param>
+        /// <param name="loadMode">The mode in which to load the scene.</param>
+        /// <param name="activateOnLoad">Whether to activate the scene on load.</param>
         private async UniTask<Scene> LoadSceneByKeyAsync(object key, LoadSceneMode loadMode = LoadSceneMode.Single,
             bool activateOnLoad = true)
         {
