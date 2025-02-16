@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Game.Interfaces.Services;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using VContainer;
 
@@ -16,15 +18,41 @@ namespace Game.Services
     {
         private Scene _emptyScene;
 
+        private readonly Dictionary<string, SceneInstance> _sceneInstances = new();
+
         public async UniTask<Scene> LoadSceneAsync(object sceneKey, LoadSceneMode loadMode = LoadSceneMode.Single,
             bool activateOnLoad = true)
         {
-            var scene = SceneManager.GetSceneByName(sceneKey.ToString());
+            var sceneBuildIndex = GetSceneBuildIndex(sceneKey.ToString());
 
-            if (scene.IsValid())
-                return scene.isLoaded ? scene : await LoadSceneByIndexAsync(scene.buildIndex);
+            return sceneBuildIndex >= 0
+                ? await LoadSceneByIndexAsync(sceneBuildIndex)
+                : await LoadSceneByKeyAsync(sceneKey, loadMode, activateOnLoad);
+        }
 
-            return await LoadSceneByKeyAsync(sceneKey, loadMode, activateOnLoad);
+        public async UniTask UnloadSceneAsync(string sceneName)
+        {
+            if (_sceneInstances.TryGetValue(sceneName, out var sceneInstance))
+            {
+                await Addressables.UnloadSceneAsync(sceneInstance);
+
+                return;
+            }
+
+            await SceneManager.UnloadSceneAsync(sceneName).ToUniTask();
+        }
+
+        private static int GetSceneBuildIndex(string sceneName)
+        {
+            for (var i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                if (SceneUtility.GetScenePathByBuildIndex(i).Contains(sceneName))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private async UniTask<Scene> LoadSceneByIndexAsync(int sceneBuildIndex,
@@ -48,6 +76,8 @@ namespace Game.Services
             try
             {
                 var sceneInstance = await Addressables.LoadSceneAsync(key, loadMode, activateOnLoad);
+
+                _sceneInstances.TryAdd(sceneInstance.Scene.name, sceneInstance);
 
                 return sceneInstance.Scene;
             }
